@@ -21,41 +21,51 @@ class Fire:
         raise NotImplementedError
 
 # Function definition ------------------------------------------------------------------
-def create_matrice(height: int, width: int):
+def create_matrix(height: int, width: int):
     return ([[None for w in range(width)] for h in range(height)])
 
-def enter_matrice_size() -> tuple[int, int]:
+def enter_matrix_size() -> tuple[int, int]:
     "IO call, return height and width"
     row = None
     column = None
 
-    print("How many rows do you want in your matrice ?")
+    print("How many rows do you want in your matrix ?")
     while row is None:
         try:
             row = int(input())
         except (ValueError, TypeError):
             print("invalid value")
+    print('')
 
-    print("How many columns do you want in your matrice ?")
+    print("How many columns do you want in your matrix ?")
     while column is None:
         try:
             column = int(input())
         except (ValueError, TypeError):
             print("invalid value")
+    print('')
 
     return row, column
 
-def print_matrice(matrice):
-    for row in matrice:
-        print(row)
+def matrix_as_str(matrix: list[list]) -> str:
+    mstring = '\n'.join([str(r) for r in matrix])
+    # for r in matrix:
+    #     mstring += str(r)
+    #     mstring += '\n'
+    logging.debug('\n' + mstring)
+    return mstring
+    
 
 # Main function definition -------------------------------------------------------------
 def main():
-    row, column = enter_matrice_size()
-    matrice = create_matrice(row, column)
-    logging.debug(print_matrice(matrice))
+    row, column = enter_matrix_size()
+    matrix = create_matrix(row, column)
+    matrix_as_str(matrix)
 
+    logging.info
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     main()
+    # test_list = [[], []]
+    # print(str(test_list))
