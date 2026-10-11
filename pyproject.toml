@@ -2,7 +2,12 @@
 name = "script template"
 version = "0.1.0"
 requires-python = ">=3.13"
+authors = [{ name = "Angèle Kowalik", email = "angele.kowalik@gmail.com"}]
+
 dependencies = []
+
+[tool.ruff]
+line-length = 88
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B"]
