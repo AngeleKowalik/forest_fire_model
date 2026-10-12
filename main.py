@@ -3,25 +3,9 @@
 import logging
 
 
-# Class definition ---------------------------------------------------------------------
-class Tree:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-class Fire:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def spread(self):
-        raise NotImplementedError
-
-    def die(self):
-        raise NotImplementedError
-
 # Function definition ------------------------------------------------------------------
-def create_matrix(height: int, width: int):
+def create_matrix(height: int, width: int) -> list[list[None]]:
+    """Create a matrix as a 2D list"""
     return ([[None for w in range(width)] for h in range(height)])
 
 def enter_matrix_size() -> tuple[int, int]:
@@ -49,23 +33,34 @@ def enter_matrix_size() -> tuple[int, int]:
 
 def matrix_as_str(matrix: list[list]) -> str:
     mstring = '\n'.join([str(r) for r in matrix])
-    # for r in matrix:
-    #     mstring += str(r)
-    #     mstring += '\n'
-    logging.debug('\n' + mstring)
     return mstring
+
+def enter_simulation_length() -> int:
+    cycles = None
     
+    print("How many cycle should the program run for ?")
+    while cycles is None:
+        try:
+            cycles = int(input())
+        except (ValueError, TypeError):
+            print("invalid value")
+    print('')
+
+    return cycles
 
 # Main function definition -------------------------------------------------------------
 def main():
     row, column = enter_matrix_size()
     matrix = create_matrix(row, column)
-    matrix_as_str(matrix)
+    matrice_string = matrix_as_str(matrix)
+    logging.debug('\n' + matrice_string + '\n')
 
-    logging.info
+    # Will be later replaced by dynamical input control
+    cycles = enter_simulation_length()
+    for n in range(cycles):
+        print('ok')
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     main()
-    # test_list = [[], []]
-    # print(str(test_list))
+    
