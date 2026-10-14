@@ -1,7 +1,10 @@
 """Main of the forest fire model"""
 # Modules importation ------------------------------------------------------------------
-import logging
+import logging as lg
 from dataclasses import dataclass
+from enum import IntEnum
+
+import numpy as np
 
 
 # Function definition ------------------------------------------------------------------
@@ -14,7 +17,7 @@ def enter_int(question) -> int:
         try:
             output = int(input())
         except (ValueError, TypeError):
-            print("Invalid value")
+            print("Invalid value, enter an integer")
     print("")
 
     return output
@@ -22,38 +25,53 @@ def enter_int(question) -> int:
 # Class definition ---------------------------------------------------------------------
 @dataclass(frozen=True)
 class SimParam():
+    """Fixed parameters defining the environnment of the simulation"""
     row : int 
     column : int 
     cycles : int 
 
-class Matrice:
-    def __init__(self, column, row):
-        self.matrix = ([[None for w in range(column)] for h in range(row)])
+class State(IntEnum):
+    VOID = 0
+    TREE = 1
+    FIRE = 2
 
-    def repr(self):
+# To do
+# Create a paramater to pass the actual argument to be filled with
+# Let a probabilistic repartition be defined
+# See array option for C optimisation so the array run at full speed
+
+class Matrice:
+    """Create a 2d list used as a matrice"""
+    def __init__(self, column, row):
+        self.matrix = np.array([[0 for c in range(column)] for r in range(row)])
+        
+
+    def repr(self) -> str:
         """Create a human readable string for the matrix"""
         return '\n'.join([str(r) for r in self.matrix])
 
 # Main function definition -------------------------------------------------------------
 def main():
-    
+    # I/O part of the script : defining the parameters of the environnement ------------
     row = enter_int("How many rows do you want in your matrix ?")
     column = enter_int("How many columns do you want in your matrix ?")
-    
     # Will be later replaced by dynamical input control
     cycles = enter_int("How many cycle should the program run for ?")
 
+    # Save of the parameters and creation of the env -----------------------------------
     sim1 = SimParam(row, column, cycles)
-    logging.debug(sim1)
+    lg.debug(sim1)
     
-    matrix1 = Matrice(sim1.row, sim1.column)
-    logging.debug(f'\n{matrix1.repr()}\n')
-    
+    matrix1 = Matrice(sim1.column, sim1.row)
+    lg.debug(f'\n{matrix1.repr()}\n')
+
+    # Main loop ------------------------------------------------------------------------
     for n in range(sim1.cycles):
-        logging.debug(f'Start of cycle {n}')
+        lg.debug(f'Start of cycle {n}')
 
 # Actual running program ---------------------------------------------------------------
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    lg.basicConfig(level=lg.DEBUG)
     main()
+    
     
