@@ -3,10 +3,14 @@
 import logging as lg
 from dataclasses import dataclass
 from enum import IntEnum
-import random
 
 import numpy as np
 
+row = 10
+column = 20
+cycle = 1
+p = 0.2
+f = 0.1
 
 # Function definition ------------------------------------------------------------------
 def enter_int(question) -> int:
@@ -53,38 +57,47 @@ class Matrix:
             [[State.VOID for c in range(column)] for r in range(row)], 
             dtype=np.uint8
             )
+        self.column = column
+        self.row = row
 
     def probabilistic_insert(self, probability, value_to_replace, replacing_value):
-        self.matrix = np.array(
-            [[replacing_value 
-              if random.uniform(0, 1) <= probability 
-              and column == value_to_replace 
-              else column for column in row] 
-             for row in self.matrix])
 
-        # np.where()
+        condition_list = np.random.uniform(0, 1,(self.row, self.column))
+        
+        self.matrix = np.where(
+            # Using the bitwise operator because comparing two arrays of boolean values
+            # with `and` is not possible as `and` only compare one value and not an
+            # array while bitwise operators compare bit by bit
+            (self.matrix == value_to_replace) & (condition_list <= probability), 
+            replacing_value, 
+            self.matrix
+            )
 
     def repr(self) -> str:
         """Create a human readable string for the matrix"""
-        return '\n'.join([str(r) for r in self.matrix])
+        try: 
+            return '\n'.join([str(r) for r in self.matrix])
+        except(TypeError):
+            return str(self.matrix)
 
 # Main function definition -------------------------------------------------------------
 def main():
     # I/O part of the script : defining the parameters of the environnement ------------
-    row = enter_int("How many rows do you want in your matrix ?")
-    column = enter_int("How many columns do you want in your matrix ?")
-    # Will be later replaced by dynamical input control
-    cycles = enter_int("How many cycle should the program run for ?")
+    # row = enter_int("How many rows do you want in your matrix ?")
+    # column = enter_int("How many columns do you want in your matrix ?")
+    # # Will be later replaced by dynamical input control
+    # cycle = enter_int("How many cycle should the program run for ?")
 
     # Save of the parameters and creation of the env -----------------------------------
-    sim1 = SimParam(row, column, cycles)
+    sim1 = SimParam(row, column, cycle)
+    prob1 = Proba(p, f)
     lg.debug(sim1)
     
     matrix1 = Matrix(sim1.column, sim1.row)
     lg.debug(f'\n{matrix1.repr()}\n')
 
-    matrix1.probabilistic_insert(0.2, 0, 1)
-    lg.debug(matrix1.repr())
+    matrix1.probabilistic_insert(prob1.p, 0, 1)
+    lg.debug("\n" + matrix1.repr())
     
 
     # Main loop ------------------------------------------------------------------------
@@ -93,14 +106,15 @@ def main():
 
 def test_function():
     matrix1 = Matrix(10, 5)
+    print(matrix1.repr())
     matrix1.probabilistic_insert(0.3, 0, 1)
     print(matrix1.repr())
     
 # Actual running program ---------------------------------------------------------------
 if __name__ == "__main__":
     lg.basicConfig(level=lg.DEBUG)
-    # main()
-    test_function()
+    main()
+    # test_function()
 
     
 
