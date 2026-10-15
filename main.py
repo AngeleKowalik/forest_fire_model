@@ -30,6 +30,11 @@ class SimParam():
     column : int 
     cycles : int 
 
+@dataclass()
+class Proba():
+    p : float # Probability of a tree growing in an empty space (void)
+    f : float # Lightning parameter : probability of a tree catching fire
+
 class State(IntEnum):
     VOID = 0
     TREE = 1
@@ -38,12 +43,15 @@ class State(IntEnum):
 # To do
 # Create a paramater to pass the actual argument to be filled with
 # Let a probabilistic repartition be defined
-# See array option for C optimisation so the array run at full speed
+
 
 class Matrice:
     """Create a 2d list used as a matrice"""
     def __init__(self, column, row):
-        self.matrix = np.array([[0 for c in range(column)] for r in range(row)])
+        self.matrix = np.array(
+            [[State.VOID for c in range(column)] for r in range(row)], 
+            dtype=np.uint8
+            )
         
 
     def repr(self) -> str:
