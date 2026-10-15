@@ -3,6 +3,7 @@
 import logging as lg
 from dataclasses import dataclass
 from enum import IntEnum
+import random
 
 import numpy as np
 
@@ -45,14 +46,23 @@ class State(IntEnum):
 # Let a probabilistic repartition be defined
 
 
-class Matrice:
-    """Create a 2d list used as a matrice"""
+class Matrix:
+    """Create a 2d list used as a matrix"""
     def __init__(self, column, row):
         self.matrix = np.array(
             [[State.VOID for c in range(column)] for r in range(row)], 
             dtype=np.uint8
             )
-        
+
+    def probabilistic_insert(self, probability, value_to_replace, replacing_value):
+        self.matrix = np.array(
+            [[replacing_value 
+              if random.uniform(0, 1) <= probability 
+              and column == value_to_replace 
+              else column for column in row] 
+             for row in self.matrix])
+
+        # np.where()
 
     def repr(self) -> str:
         """Create a human readable string for the matrix"""
@@ -70,16 +80,32 @@ def main():
     sim1 = SimParam(row, column, cycles)
     lg.debug(sim1)
     
-    matrix1 = Matrice(sim1.column, sim1.row)
+    matrix1 = Matrix(sim1.column, sim1.row)
     lg.debug(f'\n{matrix1.repr()}\n')
+
+    matrix1.probabilistic_insert(0.2, 0, 1)
+    lg.debug(matrix1.repr())
+    
 
     # Main loop ------------------------------------------------------------------------
     for n in range(sim1.cycles):
         lg.debug(f'Start of cycle {n}')
 
+def test_function():
+    matrix1 = Matrix(10, 5)
+    matrix1.probabilistic_insert(0.3, 0, 1)
+    print(matrix1.repr())
+    
 # Actual running program ---------------------------------------------------------------
 if __name__ == "__main__":
     lg.basicConfig(level=lg.DEBUG)
-    main()
+    # main()
+    test_function()
+
+    
+
+    
+    
+    
     
     
