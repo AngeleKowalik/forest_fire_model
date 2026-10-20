@@ -48,13 +48,16 @@ class Proba():
     f : float # Lightning parameter : probability of a tree catching fire
 
 class State(IntEnum):
+    """Values used in the forest fire model"""
     VOID = 0
     TREE = 1
     FIRE = 2
 
 class Matrix:
-    """Create a 2d list used as a matrix"""
+    """A Class for manipulating a 2d Numpy array as a matrix"""
+
     def __init__(self, column: int, row: int):
+        """Create a 2d NumPy array used as a matrix"""
         self.matrix = np.array(
             [[State.VOID for c in range(column)] for r in range(row)], 
             dtype=np.uint8
@@ -62,7 +65,15 @@ class Matrix:
         self.column = column
         self.row = row
 
-    def probabilistic_insert(self, probability: float, value_to_replace, replacing_value):
+    def probabilistic_insert(
+            self, 
+            probability: float, 
+            value_to_replace:int, 
+            replacing_value:int
+            ):
+        """Method for replacing a specific value in the matrix by another value 
+        following a given probability."""
+        
         if isinstance(probability, int):
             self.matrix = np.where(
                 self.matrix == value_to_replace, replacing_value, self.matrix
@@ -82,23 +93,23 @@ class Matrix:
                 )
 
     def spread(self):
-        # Part to fix
-        row, column = -1, -1
-        coordinate_list = []
+        """Method for spreading fire to nearby tree while burning down the source fire.
+        """
+        # Write down the indexes of previous fire --------------------------------------
+        row, column = 0, 0
+        old_fires = []
         for r in self.matrix:
-            row += 1
             for c in r:
-                column += 1
                 if c == State.FIRE:
-                    coordinate_list.append([row, column])
-            column = -1
+                    old_fires.append([row, column])
+                column += 1
+            row += 1
+            column = 0
 
-        # Fixed part
-        
-
-        coordinate_to_change = []
-        for coordinate in coordinate_list:
-            coordinate_to_change.append(
+        # Define where the fire need to spread -----------------------------------------
+        new_fires = []
+        for coordinate in old_fires:
+            new_fires.append(
                 [
                     [coordinate[0] - 1, coordinate[1]], 
                     [coordinate[0] + 1, coordinate[1]],
@@ -107,7 +118,8 @@ class Matrix:
                 ]
                 )
 
-        for coordinate in coordinate_to_change:
+        # Spreading the fire -----------------------------------------------------------
+        for coordinate in new_fires:
             for c in coordinate:
                 try:
                     if self.matrix[c[0], c[1]] == State.TREE:
@@ -115,7 +127,8 @@ class Matrix:
                 except IndexError:
                     pass
 
-        for coordinate in coordinate_list:
+        # Replace old fires by void ----------------------------------------------------
+        for coordinate in old_fires:
             self.matrix[coordinate[0], coordinate[1]] = State.VOID
 
 
@@ -129,6 +142,7 @@ class Matrix:
 
 # Main function definition -------------------------------------------------------------
 def main():
+    """Main function of the Drossel forest fire model."""
     # I/O part of the script : defining the parameters of the environnement ------------
     # row = enter_int("How many rows do you want in your matrix ?")
     # column = enter_int("How many columns do you want in your matrix ?")
@@ -150,46 +164,16 @@ def main():
     # Main loop ------------------------------------------------------------------------
     for n in range(sim1.cycles):
         lg.info(f'Start of cycle {n}')
-        lg.debug(f'\n{matrix1.repr()}\n')
-        matrix1.probabilistic_insert(prob1.p, State.VOID, State.TREE) # Tree growing
+        lg.info(f'\n{matrix1.repr()}\n')
         matrix1.spread() # Fire spreading
         matrix1.probabilistic_insert(prob1.f, State.TREE, State.FIRE) # Fire starting
-
-        
-
-def test_function():
-    matrix1 = Matrix(10, 5)
-    lg.debug(f'cycle 1 : \n{matrix1.repr()}\n')
-    matrix1.probabilistic_insert(p, State.VOID, State.TREE)
-    lg.debug(f'cycle 2 : \n{matrix1.repr()}')
-    sim1 = SimParam(10, 5, 1)
-    matrix1.matrix[2][4] = 2
-
-    lg.debug(f'cycle 3 : introduction of the fire\n{matrix1.repr()}')
-    
-    
-    # Test spread ----------------------------------------------------------------------
-
-    spread()
-    lg.debug(f'cycle 4 : Spreading the fire\n{matrix1.repr()}')
-    spread()
-    lg.debug(f'cycle 5 : Spreading the fire\n{matrix1.repr()}')
-    spread()
-    lg.debug(f'cycle 5 : Spreading the fire\n{matrix1.repr()}')
-
-    
-    
-            
-
-        
-
-    # print(coordinate_list)
+        matrix1.probabilistic_insert(prob1.p, State.VOID, State.TREE) # Tree growing
 
 # Actual running program ---------------------------------------------------------------
 if __name__ == "__main__":
     lg.basicConfig(level=lg.DEBUG)
     main()
-    # test_function()
+
 
     
 
