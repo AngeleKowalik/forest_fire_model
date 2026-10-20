@@ -1,8 +1,6 @@
 """Main of the forest fire model"""
 # Next steps list ----------------------------------------------------------------------
-# - Implement the spreading in the main program
 # - Create a system to store informations from the program
-# - Implement the random lignting event 
 # - Implement testing for each function
 # - Implement a safeguard for wrong input (outside of State(IntEnum))
 # - Implement graph using matplotlib
@@ -15,10 +13,10 @@ from enum import IntEnum
 
 import numpy as np
 
-row = 5
+row = 20
 column = 20
-cycle = 1
-p = 1
+cycle = 10
+p = 0.3
 f = 0.1
 
 # Function definition ------------------------------------------------------------------
@@ -84,7 +82,43 @@ class Matrix:
                 )
 
     def spread(self):
-        pass
+        # Part to fix
+        row, column = -1, -1
+        coordinate_list = []
+        for r in self.matrix:
+            row += 1
+            for c in r:
+                column += 1
+                if c == State.FIRE:
+                    coordinate_list.append([row, column])
+            column = -1
+
+        # Fixed part
+        
+
+        coordinate_to_change = []
+        for coordinate in coordinate_list:
+            coordinate_to_change.append(
+                [
+                    [coordinate[0] - 1, coordinate[1]], 
+                    [coordinate[0] + 1, coordinate[1]],
+                    [coordinate[0], coordinate[1] - 1],
+                    [coordinate[0], coordinate[1] + 1]
+                ]
+                )
+
+        for coordinate in coordinate_to_change:
+            for c in coordinate:
+                try:
+                    if self.matrix[c[0], c[1]] == State.TREE:
+                        self.matrix[c[0], c[1]] = State.FIRE
+                except IndexError:
+                    pass
+
+        for coordinate in coordinate_list:
+            self.matrix[coordinate[0], coordinate[1]] = State.VOID
+
+
 
     def repr(self) -> str:
         """Create a human readable string for the matrix"""
@@ -110,15 +144,18 @@ def main():
     matrix1 = Matrix(sim1.column, sim1.row)
     lg.debug(f'\n{matrix1.repr()}\n')
     matrix1.probabilistic_insert(prob1.p, State.VOID, State.TREE)
-    lg.debug("\n" + matrix1.repr())
+    lg.debug("\n" + matrix1.repr() + "\n")
     
 
     # Main loop ------------------------------------------------------------------------
     for n in range(sim1.cycles):
-        lg.debug(f'Start of cycle {n}')
-        matrix1.probabilistic_insert(prob1.p, State.VOID, State.TREE)
-        matrix1.probabilistic_insert(prob1.f, State.TREE, State.FIRE)
-        lg.debug(f'\n{matrix1.repr()}')
+        lg.info(f'Start of cycle {n}')
+        lg.debug(f'\n{matrix1.repr()}\n')
+        matrix1.probabilistic_insert(prob1.p, State.VOID, State.TREE) # Tree growing
+        matrix1.spread() # Fire spreading
+        matrix1.probabilistic_insert(prob1.f, State.TREE, State.FIRE) # Fire starting
+
+        
 
 def test_function():
     matrix1 = Matrix(10, 5)
@@ -132,44 +169,6 @@ def test_function():
     
     
     # Test spread ----------------------------------------------------------------------
-    def spread():
-        row, column = -1, -1
-        coordinate_list = []
-        for r in matrix1.matrix:
-            row += 1
-            for c in r:
-                column += 1
-                if c == State.FIRE:
-                    coordinate_list.append([row, column])
-            column = -1
-
-        
-
-        coordinate_to_change = []
-        for coordinate in coordinate_list:
-            coordinate_to_change.append(
-                [
-                    [coordinate[0] - 1, coordinate[1]], 
-                    [coordinate[0] + 1, coordinate[1]],
-                    [coordinate[0], coordinate[1] - 1],
-                    [coordinate[0], coordinate[1] + 1]
-                ]
-                )
-
-
-        
-        
-
-        for coordinate in coordinate_to_change:
-            for c in coordinate:
-                try:
-                    if matrix1.matrix[c[0], c[1]] == State.TREE:
-                        matrix1.matrix[c[0], c[1]] = State.FIRE
-                except IndexError:
-                    pass
-
-        for coordinate in coordinate_list:
-            matrix1.matrix[coordinate[0], coordinate[1]] = State.VOID
 
     spread()
     lg.debug(f'cycle 4 : Spreading the fire\n{matrix1.repr()}')
@@ -189,8 +188,8 @@ def test_function():
 # Actual running program ---------------------------------------------------------------
 if __name__ == "__main__":
     lg.basicConfig(level=lg.DEBUG)
-    # main()
-    test_function()
+    main()
+    # test_function()
 
     
 
