@@ -1,5 +1,7 @@
-"""Main of the forest fire model"""
+"""Main of the forest fire model after Drossel and Schwabl"""
 # Next steps list ----------------------------------------------------------------------
+# - Search in orginal paper what is the correct order for growing, spreading and 
+#   lightning
 # - Create a system to store informations from the program
 # - Implement testing for each function
 # - Implement a safeguard for wrong input (outside of State(IntEnum))
@@ -13,9 +15,9 @@ from enum import IntEnum
 
 import numpy as np
 
-row = 20
-column = 20
-cycle = 10
+# row = 20
+# column = 20
+# cycle = 10
 p = 0.3
 f = 0.1
 
@@ -144,10 +146,10 @@ class Matrix:
 def main():
     """Main function of the Drossel forest fire model."""
     # I/O part of the script : defining the parameters of the environnement ------------
-    # row = enter_int("How many rows do you want in your matrix ?")
-    # column = enter_int("How many columns do you want in your matrix ?")
-    # # Will be later replaced by dynamical input control
-    # cycle = enter_int("How many cycle should the program run for ?")
+    row = enter_int("How many rows do you want in your matrix ?")
+    column = enter_int("How many columns do you want in your matrix ?")
+    # Will be later replaced by dynamical input control
+    cycle = enter_int("How many cycle should the program run for ?")
 
     # Save of the parameters and creation of the env -----------------------------------
     sim1 = SimParam(row, column, cycle)

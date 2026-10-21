@@ -1,6 +1,6 @@
 # Forest fire model
 ## Goal 
-Recreating the forest fire model after Drossel and Schwabl work. 
+Recreating the forest fire model after Drossel and Schwabl work. The goal is to see if the same results can be gathered with this script.
 
 It is caracterized by four rules : 
 - A burning cell turns into an empty cell
@@ -9,12 +9,24 @@ It is caracterized by four rules :
 - An empty space fill with a tree with probability $p$
 
 ## Project structure
-Define a class for a tree and a class for a fire
+The project is centered around a matrix created from a NumPy array for efficency as it use C for computation. At the startup, this array is entirely filled with 0s reprensenting void. Then, the main loop is executed. With each iterations :
+- Trees grow randomly on void's spots following the probability $p$
+- Fire is lighten up replacing random trees following the probability $f$
+- If there is adjacent trees near a fire, the fire burn out and is replaced by void while it spread to nearby trees.
 
-- Initialise an empty grid of n*n
-- Each tick, if space is empty then possibility to spawn a tree $p$
-- If tree possibility to spawn a fire $f$
-- If fire and tree contingent, then fire spread and parent fire die
-- 
+The backbone and computation logic of the program is entirely separated from the I/O part so future implementation will be able to make it run quickly without animations to gather pure data.
+
+## Roadmap
+- [ ] Implementing graphs using Matplotlib
+- [ ] Creating tests using pytest for each functions
+- [ ] Adding a visualisation using pygame or similar library
+- [ ] Storing results of each runs in an outside file
+
+## Fixes to make
+- [ ] Checking original paper to see the correct order of operation
+- [ ] Improve the slow python's loops by using NumPy methods instead
+- [ ] Implement a safeguard system to protect from wrong hard coded values (using IntNum)
+
+
 
 

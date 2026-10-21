@@ -1,5 +1,5 @@
 [project]
-name = "script template"
+name = "forest fire model (after Drossel and Schwabl)"
 version = "0.1.0"
 requires-python = ">=3.13"
 authors = [{ name = "Angèle Kowalik", email = "angele.kowalik@gmail.com"}]
