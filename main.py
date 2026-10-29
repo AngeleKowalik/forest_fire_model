@@ -1,11 +1,11 @@
 """Main of the forest fire model after Drossel and Schwabl"""
 # Next steps list ----------------------------------------------------------------------
-# - Search in orginal paper what is the correct order for growing, spreading and 
-#   lightning
+# - Fix fire jumping from side to side bug
 # - Create a system to store informations from the program
 # - Implement testing for each function
 # - Implement a safeguard for wrong input (outside of State(IntEnum))
 # - Implement graph using matplotlib
+# - Replace for loops by vectorialised numpy functions
 
 
 # Modules importation ------------------------------------------------------------------
@@ -23,7 +23,9 @@ f = 0.1
 
 # Function definition ------------------------------------------------------------------
 def enter_int(question: str) -> int:
-    """I/O in terminal"""
+    """I/O in terminal : Output a question on terminal and await an int from user.
+    While no valid int is provided by the user, program will prompt to enter a valid
+    int. Does not allow `True` and `False` as int."""
     output = None
 
     print(question)
@@ -39,18 +41,19 @@ def enter_int(question: str) -> int:
 # Class definition ---------------------------------------------------------------------
 @dataclass(frozen=True)
 class SimParam():
-    """Fixed parameters defining the environnment of the simulation"""
+    """Fixed parameters defining the environnment of the simulation."""
     row : int 
     column : int 
     cycles : int 
 
 @dataclass()
 class Proba():
+    """Variable adjusting probabilities of events occuring"""
     p : float # Probability of a tree growing in an empty space (void)
     f : float # Lightning parameter : probability of a tree catching fire
 
 class State(IntEnum):
-    """Values used in the forest fire model"""
+    """Values used in the forest fire model to represent a forest."""
     VOID = 0
     TREE = 1
     FIRE = 2

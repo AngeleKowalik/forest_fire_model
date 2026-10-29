@@ -23,7 +23,8 @@ The backbone and computation logic of the program is entirely separated from the
 - [ ] Storing results of each runs in an outside file
 
 ## Fixes to make
-- [ ] Checking original paper to see the correct order of operation
+- [x] Checking original paper to see the correct order of operation
+- [ ] Refactor the spreading function to remove fire jumping from side to side of the matrix bug
 - [ ] Improve the slow python's loops by using NumPy methods instead
 - [ ] Implement a safeguard system to protect from wrong hard coded values (using IntNum)
 
