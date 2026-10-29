@@ -1,6 +1,6 @@
 """Main of the forest fire model after Drossel and Schwabl"""
 # Next steps list ----------------------------------------------------------------------
-# - Fix fire jumping from side to side bug
+# - Improve fire spreading functino to use only NumPy methods
 # - Create a system to store informations from the program
 # - Implement testing for each function
 # - Implement a safeguard for wrong input (outside of State(IntEnum))
@@ -126,6 +126,8 @@ class Matrix:
         # Spreading the fire -----------------------------------------------------------
         for coordinate in new_fires:
             for c in coordinate:
+                if (abs(c[0]) != c[0]) or (abs(c[1]) != c[1]):
+                    pass
                 try:
                     if self.matrix[c[0], c[1]] == State.TREE:
                         self.matrix[c[0], c[1]] = State.FIRE
