@@ -1,12 +1,6 @@
 """Main of the forest fire model after Drossel and Schwabl"""
-# Next steps list ----------------------------------------------------------------------
-# - Fix fire jumping from side to side bug
-# - Create a system to store informations from the program
-# - Implement testing for each function
-# - Implement a safeguard for wrong input (outside of State(IntEnum))
-# - Implement graph using matplotlib
-# - Replace for loops by vectorialised numpy functions
-
+# Immediate next step ------------------------------------------------------------------
+# Create a pytest function and improve spreading function against the oracle
 
 # Modules importation ------------------------------------------------------------------
 import logging as lg
@@ -37,6 +31,24 @@ def enter_int(question: str) -> int:
     print("")
 
     return output
+
+def enter_proba(question: str) -> float:
+    """I/O in terminal"""
+    output = None
+
+    print(question)
+    while output is None:
+        try:
+            output = float(input())
+            if not 0 <= output <= 1:
+                output = None
+                raise ValueError
+        except (ValueError, TypeError):
+            print("Invalid value, enter a float between 0 and 1 included")
+    print("")
+
+    return output
+        
 
 # Class definition ---------------------------------------------------------------------
 @dataclass(frozen=True)
@@ -126,6 +138,8 @@ class Matrix:
         # Spreading the fire -----------------------------------------------------------
         for coordinate in new_fires:
             for c in coordinate:
+                if c[0] < 0 or c[0] > self.row or c[1] < 0 or c[1] > self.column:
+                    continue
                 try:
                     if self.matrix[c[0], c[1]] == State.TREE:
                         self.matrix[c[0], c[1]] = State.FIRE
@@ -178,6 +192,8 @@ def main():
 if __name__ == "__main__":
     lg.basicConfig(level=lg.DEBUG)
     main()
+    
+    
 
 
     

@@ -17,6 +17,8 @@ The project is centered around a matrix created from a NumPy array for efficency
 The backbone and computation logic of the program is entirely separated from the I/O part so future implementation will be able to make it run quickly without animations to gather pure data.
 
 ## Roadmap
+- [ ] Implementing a safeguard system to protect from wrong hard coded values (using IntNum)
+- [ ] Writing a function for the user to enter float between 0 and 1 (for proba)
 - [ ] Implementing graphs using Matplotlib
 - [ ] Creating tests using pytest for each functions
 - [ ] Adding a visualisation using pygame or similar library
@@ -24,9 +26,9 @@ The backbone and computation logic of the program is entirely separated from the
 
 ## Fixes to make
 - [x] Checking original paper to see the correct order of operation
-- [ ] Refactor the spreading function to remove fire jumping from side to side of the matrix bug
-- [ ] Improve the slow python's loops by using NumPy methods instead
-- [ ] Implement a safeguard system to protect from wrong hard coded values (using IntNum)
+- [x] Refactoring the spreading function to remove fire jumping from side to side of the matrix bug
+- [ ] Improving the slow python's loops by using NumPy methods instead
+
 
 
 
