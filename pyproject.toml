@@ -1,10 +1,13 @@
 [project]
-name = "forest fire model (after Drossel and Schwabl)"
+name = "forest_fire_model"
 version = "0.1.0"
 requires-python = ">=3.13"
 authors = [{ name = "Angèle Kowalik", email = "angele.kowalik@gmail.com"}]
 
-dependencies = []
+dependencies = ["numpy>=2.5"]
+
+optional-dependencies = {"dev" = ["pytest==7.4.2", "ruff==0.0.297"]}
+    
 
 [tool.ruff]
 line-length = 88

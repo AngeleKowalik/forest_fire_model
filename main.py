@@ -9,6 +9,7 @@ from enum import IntEnum
 
 import numpy as np
 
+# Just for rapid prototyping, will be removed later ------------------------------------
 # row = 20
 # column = 20
 # cycle = 10
@@ -75,12 +76,24 @@ class Matrix:
 
     def __init__(self, column: int, row: int):
         """Create a 2d NumPy array used as a matrix"""
+        # To change for a numpy method
         self.matrix = np.array(
             [[State.VOID for c in range(column)] for r in range(row)], 
             dtype=np.uint8
             )
         self.column = column
         self.row = row
+        
+        temp = np.ones((self.row, self.column), dtype= bool)
+        temp[0].fill(False)
+        self.fix_mask_down = temp.copy()
+        self.fix_mask_up = np.copy(np.roll(temp, row - 1, 0))
+        temp = temp.swapaxes(0, 1)
+        self.fix_mask_right = temp.copy()
+        self.fix_mask_left = np.copy(np.roll(temp, column - 1, 1))
+
+
+        
 
     def probabilistic_insert(
             self, 
@@ -91,10 +104,12 @@ class Matrix:
         """Method for replacing a specific value in the matrix by another value 
         following a given probability."""
         
-        if isinstance(probability, int):
+        if probability == 1:
             self.matrix = np.where(
                 self.matrix == value_to_replace, replacing_value, self.matrix
                 )
+        if probability == 0:
+            pass
 
         else:
             condition_list = np.random.uniform(0, 1,(self.row, self.column))
@@ -112,44 +127,49 @@ class Matrix:
     def spread(self):
         """Method for spreading fire to nearby tree while burning down the source fire.
         """
-        # Write down the indexes of previous fire --------------------------------------
-        row, column = 0, 0
-        old_fires = []
-        for r in self.matrix:
-            for c in r:
-                if c == State.FIRE:
-                    old_fires.append([row, column])
-                column += 1
-            row += 1
-            column = 0
+        # Create a truth table of fires in the matrix ----------------------------------
+        old_fire_mask = self.matrix == State.FIRE
 
-        # Define where the fire need to spread -----------------------------------------
-        new_fires = []
-        for coordinate in old_fires:
-            new_fires.append(
-                [
-                    [coordinate[0] - 1, coordinate[1]], 
-                    [coordinate[0] + 1, coordinate[1]],
-                    [coordinate[0], coordinate[1] - 1],
-                    [coordinate[0], coordinate[1] + 1]
-                ]
-                )
+        # Spread the fire to neighbouring cells ----------------------------------------
+        shifted_mask_down = np.roll(old_fire_mask, 1, 0)
+        shifted_mask_right = np.roll(old_fire_mask, 1, 1)
+        shifted_mask_up = np.roll(old_fire_mask, -1, 0)
+        shifted_mask_left = np.roll(old_fire_mask, -1, 1)
 
-        # Spreading the fire -----------------------------------------------------------
-        for coordinate in new_fires:
-            for c in coordinate:
-                if c[0] < 0 or c[0] > self.row or c[1] < 0 or c[1] > self.column:
-                    continue
-                try:
-                    if self.matrix[c[0], c[1]] == State.TREE:
-                        self.matrix[c[0], c[1]] = State.FIRE
-                except IndexError:
-                    pass
+        # Remove fires jumping edge to edge --------------------------------------------
+        shifted_mask_down = np.logical_and(
+            shifted_mask_down, 
+            self.fix_mask_down
+            )
 
-        # Replace old fires by void ----------------------------------------------------
-        for coordinate in old_fires:
-            self.matrix[coordinate[0], coordinate[1]] = State.VOID
+        shifted_mask_up = np.logical_and(
+            shifted_mask_up,
+            self.fix_mask_up
+            )
 
+        shifted_mask_right = np.logical_and(
+            shifted_mask_right, 
+            self.fix_mask_right
+            )
+
+        shifted_mask_left = np.logical_and(
+            shifted_mask_left,
+            self.fix_mask_left
+        )
+
+        united_mask = np.logical_or(shifted_mask_up, shifted_mask_down)
+        united_mask = np.logical_or(united_mask, shifted_mask_left)
+        united_mask = np.logical_or(united_mask, shifted_mask_right)
+
+        
+        tree_mask = self.matrix == State.TREE
+        united_mask = np.logical_and(united_mask, tree_mask)
+        
+        # Remove old fires -----------------------------------------------------
+        self.matrix = np.where(old_fire_mask, State.VOID, self.matrix)
+
+        # Spread fire
+        self.matrix = np.where(united_mask, State.FIRE, self.matrix)
 
 
     def repr(self) -> str:
@@ -177,7 +197,6 @@ def main():
     matrix1 = Matrix(sim1.column, sim1.row)
     lg.debug(f'\n{matrix1.repr()}\n')
     matrix1.probabilistic_insert(prob1.p, State.VOID, State.TREE)
-    lg.debug("\n" + matrix1.repr() + "\n")
     
 
     # Main loop ------------------------------------------------------------------------
@@ -193,11 +212,19 @@ if __name__ == "__main__":
     lg.basicConfig(level=lg.DEBUG)
     main()
     
+
+
+
+
+
+
+
     
 
 
     
-
+    
+    
     
     
     
