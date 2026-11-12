@@ -187,8 +187,24 @@ def test_center():
     test.spread()
     assert np.all(oracle == test.matrix), f'Test matrix:\n{test.matrix}\nTarget matrix:\n{oracle}'
 
+def test_rectangular_matrix():
+    oracle = np.array([[1, 1, 1, 1, 1], [1, 1, 2, 1, 1], [1, 1, 1, 1, 1]], np.uint8)
+    test = mn.Matrix(3, 5)
+    test.probabilistic_insert(1, 0, 1)
+    test.matrix[1, 2] = 2
 
-
+    oracle[0, 2], oracle[1, 1], oracle[1, 3], oracle[2, 2], oracle[1, 2] = 2, 2, 2, 2, 0
+    test.spread()
+    assert np.all(oracle == test.matrix), f'Test matrix:\n{test.matrix}\nTarget matrix:\n{oracle}'
+    oracle[0, 1], oracle[0, 3], oracle[2, 1], oracle[2, 3], oracle[1, 0], oracle[1, 4], oracle[0, 2], oracle[1, 1], oracle[1, 3], oracle[2, 2] = 2, 2, 2, 2, 2, 2, 0, 0, 0, 0
+    test.spread()
+    assert np.all(oracle == test.matrix), f'Test matrix:\n{test.matrix}\nTarget matrix:\n{oracle}'
+    oracle[0, 0], oracle[0, 4], oracle[2, 0], oracle[2, 4], oracle[0, 1], oracle[0, 3], oracle[2, 1], oracle[2, 3], oracle[1, 0], oracle[1, 4] = 2, 2, 2, 2, 0, 0, 0, 0, 0, 0
+    test.spread()
+    assert np.all(oracle == test.matrix), f'Test matrix:\n{test.matrix}\nTarget matrix:\n{oracle}'
+    oracle[0, 0], oracle[0, 4], oracle[2, 0], oracle[2, 4] = 0, 0, 0, 0
+    test.spread()
+    assert np.all(oracle == test.matrix), f'Test matrix:\n{test.matrix}\nTarget matrix:\n{oracle}'
 
     
 

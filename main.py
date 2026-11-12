@@ -1,6 +1,6 @@
 """Main of the forest fire model after Drossel and Schwabl"""
 # Immediate next step ------------------------------------------------------------------
-# Create a pytest function and improve spreading function against the oracle
+
 
 # Modules importation ------------------------------------------------------------------
 import logging as lg
@@ -74,26 +74,29 @@ class State(IntEnum):
 class Matrix:
     """A Class for manipulating a 2d Numpy array as a matrix"""
 
-    def __init__(self, column: int, row: int):
+    def __init__(self, row: int, column: int):
         """Create a 2d NumPy array used as a matrix"""
-        # To change for a numpy method
-        self.matrix = np.array(
-            [[State.VOID for c in range(column)] for r in range(row)], 
-            dtype=np.uint8
-            )
+        # To change for a numpy method ------------------------------
+        self.matrix = np.full((row, column), State.VOID, np.uint8)
+        
         self.column = column
         self.row = row
         
         temp = np.ones((self.row, self.column), dtype= bool)
-        temp[0].fill(False)
+        temp[0, :] = False
         self.fix_mask_down = temp.copy()
-        self.fix_mask_up = np.copy(np.roll(temp, row - 1, 0))
-        temp = temp.swapaxes(0, 1)
+
+        temp[:, :] = True
+        temp[-1, :] = False
+        self.fix_mask_up = np.copy(temp)
+
+        temp[:, :] = True
+        temp[:, 0] = False
         self.fix_mask_right = temp.copy()
-        self.fix_mask_left = np.copy(np.roll(temp, column - 1, 1))
 
-
-        
+        temp[:, :] = True
+        temp[:, -1] = False
+        self.fix_mask_left = np.copy(temp)
 
     def probabilistic_insert(
             self, 
@@ -108,7 +111,7 @@ class Matrix:
             self.matrix = np.where(
                 self.matrix == value_to_replace, replacing_value, self.matrix
                 )
-        if probability == 0:
+        elif probability == 0:
             pass
 
         else:
@@ -172,7 +175,7 @@ class Matrix:
         self.matrix = np.where(united_mask, State.FIRE, self.matrix)
 
 
-    def repr(self) -> str:
+    def __str__(self) -> str:
         """Create a human readable string for the matrix"""
         try: 
             return '\n'.join([str(r) for r in self.matrix])
@@ -194,22 +197,24 @@ def main():
     lg.debug(sim1)
 
     # Initialisation of the matrix -----------------------------------------------------
-    matrix1 = Matrix(sim1.column, sim1.row)
-    lg.debug(f'\n{matrix1.repr()}\n')
+    matrix1 = Matrix(sim1.row, sim1.column)
+    lg.debug(matrix1)
     matrix1.probabilistic_insert(prob1.p, State.VOID, State.TREE)
     
 
     # Main loop ------------------------------------------------------------------------
     for n in range(sim1.cycles):
         lg.info(f'Start of cycle {n}')
-        lg.info(f'\n{matrix1.repr()}\n')
+        lg.info(f'\n{matrix1}')
         matrix1.spread() # Fire spreading
         matrix1.probabilistic_insert(prob1.f, State.TREE, State.FIRE) # Fire starting
         matrix1.probabilistic_insert(prob1.p, State.VOID, State.TREE) # Tree growing
 
+    lg.warning("finihed")
+
 # Actual running program ---------------------------------------------------------------
 if __name__ == "__main__":
-    lg.basicConfig(level=lg.DEBUG)
+    lg.basicConfig(level=lg.INFO)
     main()
     
 
