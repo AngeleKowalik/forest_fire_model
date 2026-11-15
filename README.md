@@ -1,33 +1,57 @@
 # Forest fire model
-## Goal 
-Recreating the forest fire model after Drossel and Schwabl work. The goal is to see if the same results can be gathered with this script.
+[Lien vers la documentation française](README_FR.md) | [Skip to installation](#installation)
 
-It is caracterized by four rules : 
-- A burning cell turns into an empty cell
-- A tree will burn if at least one neighbour is burning
-- A tree will ignite with probability $f$ even if no neighbour is burning
-- An empty space fill with a tree with probability $p$
+This project is an implementation of the Drossel and Schwabl forest-fire model from 1992. It is one of the earliest cellular automata dedicated to studying self-organized criticality. 
 
-## Project structure
-The project is centered around a matrix created from a NumPy array for efficency as it use C for computation. At the startup, this array is entirely filled with 0s reprensenting void. Then, the main loop is executed. With each iterations :
-- Trees grow randomly on void's spots following the probability $p$
-- Fire is lighten up replacing random trees following the probability $f$
-- If there is adjacent trees near a fire, the fire burn out and is replaced by void while it spread to nearby trees.
+It operates on a 2D matrix populated with trees, void or fire. The fire spreads to nearby trees while source fire dies out.
 
-The backbone and computation logic of the program is entirely separated from the I/O part so future implementation will be able to make it run quickly without animations to gather pure data.
+This version is entirely built in Python using NumPy vectorization to improve efficiency by running C under the hood and avoiding costly `for` loops.
+
+## Table of contents
+- [Scientific references](#scientific-references)
+- [Model architecture](#model-architecture)
+- [Roadmap](#roadmap)
+- [Fixes to make](#fixes-to-make)
+
+## Scientific references
+This implementation relies heavily upon these papers:
+* **Foundational model:** P. Bak, K. Chen, and C. Tang, *"A forest-fire model and some thoughts on turbulence"*, Physics Letters A, vol. 147, no. 5–6, pp. 297–300, 1990. DOI: [10.1016/0375-9601(90)90451-S](https://doi.org/10.1016/0375-9601(90)90451-S)
+* **Self-organized critical extension (implemented here):** B. Drossel and F. Schwabl, *"Self-organized critical forest-fire model"*, Physical Review Letters, vol. 69, no. 11, pp. 1629–1632, 1992. DOI: [10.1103/PhysRevLett.69.1629](https://doi.org/10.1103/PhysRevLett.69.1629)
+
+The first model emulates a fractal distribution of energy dissipation in a closed system, but it has a major flaw: fire needs to be introduced manually and reignited as it will eventually die out.
+
+The second model demonstrates self-organized criticality, with the system naturally evolving toward a power-law distribution of burned clusters when lightning frequency (probability of a tree igniting) is much smaller than tree growth ($f \ll p \ll 1$).
+
+## Model architecture
+### Lattice settings
+The automaton's lattice is a discrete 2D grid of dimensions $R \times C$ ($row \times column$). Its boundaries are absorbing so fire stops at the edge of the matrix and does not wrap around to the opposite side.
+
+Each cell can have one of three discrete states implemented using `IntEnum` for type safety and ease of reading:
+- `VOID`  (0)
+- `TREE` (1)
+- `FIRE` (2)
+
+### Update rules
+The simulation runs on synchronous update rules meaning the entire matrix updates at each discrete time step ($t \to t+1$) according to four rules: 
+1) **Propagation:** Each `FIRE` previously on the grid will spread to `TREE` in their Von Neumann neighborhood (4 orthogonal cells, no diagonals).
+2) **Burnout:** Source `FIRE` burns down and is replaced by `VOID`.
+3) **Lighting:** Remaining `TREE` cells spontaneously ignite into `FIRE` following lightning probability $f$.
+4) **Growth:** `VOID` cells grow into `TREE` with probability $p$.
 
 ## Roadmap
+- [x] Writing a function for the user to enter float between 0 and 1 (for proba)
+- [x] Creating tests using pytest for each functions
+- [ ] Completing README.md
+- [ ] Completing README_FR.md
 - [ ] Implementing a safeguard system to protect from wrong hard coded values (using IntNum)
-- [ ] Writing a function for the user to enter float between 0 and 1 (for proba)
 - [ ] Implementing graphs using Matplotlib
-- [ ] Creating tests using pytest for each functions
 - [ ] Adding a visualisation using pygame or similar library
 - [ ] Storing results of each runs in an outside file
 
 ## Fixes to make
 - [x] Checking original paper to see the correct order of operation
 - [x] Refactoring the spreading function to remove fire jumping from side to side of the matrix bug
-- [ ] Improving the slow python's loops by using NumPy methods instead
+- [x] Improving the slow python's loops by using NumPy methods instead
 
 
 
