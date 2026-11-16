@@ -6,7 +6,7 @@ authors = [{ name = "Angèle Kowalik", email = "angele.kowalik@gmail.com"}]
 dependencies = ["numpy>=2.5.4"]
 
 [project.optional-dependencies]
-dev = ["pytest==9.1.1", "ruff==0.0.303"]
+dev = ["pytest==9.1.1", "ruff==0.17.0"]
 
 [tool.ruff]
 line-length = 88
