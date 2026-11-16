@@ -3,10 +3,10 @@ name = "forest_fire_model"
 version = "0.1.0"
 requires-python = ">=3.13"
 authors = [{ name = "Angèle Kowalik", email = "angele.kowalik@gmail.com"}]
-dependencies = ["numpy>=2.5"]
+dependencies = ["numpy>=2.5.4"]
 
 [project.optional-dependencies]
-dev = ["pytest==7.4.2", "ruff==0.0.297"]
+dev = ["pytest==9.1.1", "ruff==0.0.303"]
 
 [tool.ruff]
 line-length = 88

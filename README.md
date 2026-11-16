@@ -87,11 +87,14 @@ source .venv/bin/activate
 
 # 3. Upgrade pip (recommended)
 pip install --upgrade pip
-
-# 4a. Standard installation (to simply run the simulation)
+```
+4a. Standard installation (to simply run the simulation)
+```bash
 pip install .
+```
 
-# 4b. Developer installation (editable mode, testing and linting dependencies)
+4b. Developer installation (editable mode, testing and linting dependencies)
+```bash
 pip install -e ".[dev]"
 ```
 
@@ -113,11 +116,15 @@ python -m venv .venv
 
 # 3. Upgrade pip (recommended)
 python -m pip install --upgrade pip
+```
 
-# 4a. Standard installation (to simply run the simulation)
+4a. Standard installation (to simply run the simulation)
+```powershell
 pip install .
+```
 
-# 4b. Developer installation (editable mode, testing and linting dependencies)
+4b. Developer installation (editable mode, testing and linting dependencies)
+```powershell
 pip install -e ".[dev]"
 ```
 
