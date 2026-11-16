@@ -1,6 +1,8 @@
 # import pytest
-import main as mn
 import numpy as np
+
+import forest_fire.main as mn
+
 
 def test_matrix_init():
     """Test if matrix initialize properly. It should create a 3*3 np array filled with 0s."""

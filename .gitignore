@@ -1,3 +1,4 @@
 .venv
 __pycache__
 .pytest_cache
+forest_fire_model.egg-info

@@ -38,6 +38,32 @@ The simulation runs on synchronous update rules meaning the entire matrix update
 3) **Lighting:** Remaining `TREE` cells spontaneously ignite into `FIRE` following lightning probability $f$.
 4) **Growth:** `VOID` cells grow into `TREE` with probability $p$.
 
+## Software architecture
+### Vectorized NumPy instead of built-in Python
+Iterating over a 2D grid using nested `for` loops introduces heavy calculation overhead and is inherently slow. Instead, this program uses NumPy to compute array operations. It is significantly faster because NumPy methods are written in C, which allows for quick vectorized operations using boolean masking. Moreover, NumPy allows for efficient memory allocation by using `np.uint8` arrays.
+
+In order to solve the toroidal wrap-around side effect of `np.roll()`, which would allow fire to jump from one edge of the grid to the other, static boolean boundary masks are pre-computed when the matrix is initialized and applied each time the grid is rolled.
+
+### Code quality
+To ensure proper modularity and code quality, this script is written using several core paradigms:
+- **Separation of concerns:** The core mathematical engine (`Matrix`, `SimParam`, `Proba`, `State`) is strictly decoupled from terminal I/O (`enter_int`, `enter_proba`). This allows for fast, headless data collection and will facilitate porting the script to Project Mesa.
+- **Safety measures:** To ensure proper reliable execution, the entire script is tested with `pytest`. It is strictly type-hinted and configuration parameters are rendered immutable via `@dataclass(frozen=True)`.
+- **Maintainability:** The project delivers clean debugging feedback through structured `logging`. The modular architecture allows for standard developer installation and dependency management using `pyproject.toml`.
+
+### Repository structure
+```
+forest-fire-model/
+├── pyproject.toml
+├── README.md
+├── README_FR.md
+├── src/
+│   └── forest_fire/
+│       ├── __init__.py
+│       └── main.py
+└── tests/
+    └── test_main.py
+```
+
 ## Roadmap
 - [x] Writing a function for the user to enter float between 0 and 1 (for proba)
 - [x] Creating tests using pytest for each functions
