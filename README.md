@@ -3,9 +3,9 @@
 
 This project is an implementation of the Drossel and Schwabl forest-fire model from 1992. It is one of the earliest cellular automata dedicated to studying self-organized criticality. 
 
-It operates on a 2D matrix populated with trees, void or fire. The fire spreads to nearby trees while source fire dies out. This mechanic allow for an emergent power-law distribution of burned forest cluster adn self-organized criticality.
+It operates on a 2D matrix populated with trees, void or fire. The fire spreads to nearby trees while source fire dies out. This mechanic allow for an emergent power-law distribution of burned forest cluster and self-organized criticality.
 
-This version is entirely built in Python using NumPy vectorization to improve efficiency by running C under the hood. It features strict type-hinting, logging and testingg to ensure long-term maintainability.
+This version is entirely built in Python using NumPy vectorization to improve efficiency by running C under the hood. It features strict type-hinting, logging and testing to ensure long-term maintainability.
 
 ## Table of contents
 - [Scientific references](#scientific-references)
@@ -41,7 +41,7 @@ Each cell can have one of three discrete states implemented using `IntEnum` for 
 The simulation runs on synchronous update rules meaning the entire matrix updates at each discrete time step ($t \to t+1$) according to four rules: 
 1) **Propagation:** Each `FIRE` previously on the grid will spread to `TREE` in their Von Neumann neighborhood (4 orthogonal cells, no diagonals).
 2) **Burnout:** Source `FIRE` burns down and is replaced by `VOID`.
-3) **Lighting:** Remaining `TREE` cells spontaneously ignite into `FIRE` following lightning probability $f$.
+3) **Lightning:** Remaining `TREE` cells spontaneously ignite into `FIRE` following lightning probability $f$.
 4) **Growth:** `VOID` cells grow into `TREE` with probability $p$.
 
 ## Software architecture
@@ -126,6 +126,65 @@ pip install .
 4b. Developer installation (editable mode, testing and linting dependencies)
 ```powershell
 pip install -e ".[dev]"
+```
+
+## Usage
+**Linux / macOS**
+```bash
+python3 -m forest_fire.main
+```
+
+**Windows**
+```powershell
+python -m forest_fire.main
+```
+
+Then follow the instructions written in the CLI
+
+**Example:**
+```bash
+python3 -m forest_fire.main
+# How many rows do you want in your matrix ?
+4
+
+# How many columns do you want in your matrix ?
+5
+
+# How many cycles should the program run for ?
+5
+
+# How many cycle should the program run for ?
+6
+
+# [0 0 1 0 0]
+# [0 1 0 0 0]
+# [1 1 0 0 0]
+# [1 0 0 1 0]
+
+# [0 0 1 0 0]
+# [1 1 0 1 1]
+# [1 1 0 0 1]
+# [1 0 1 1 0]
+
+# [1 1 1 0 0]
+# [1 1 1 1 1]
+# [1 1 0 0 1]
+# [1 1 1 1 1]
+
+# [1 1 1 0 0]
+# [1 1 2 1 1]
+# [1 1 0 0 1]
+# [1 1 1 1 1]
+
+# [1 1 2 0 0]
+# [1 2 0 2 1]
+# [1 1 1 0 1]
+# [2 1 1 1 1]
+
+# [1 2 0 0 0]
+# [2 0 1 1 2]
+# [2 2 1 0 1]
+# [1 2 1 1 1]
 ```
 
 ## Roadmap

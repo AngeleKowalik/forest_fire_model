@@ -190,11 +190,11 @@ def main():
     column = enter_int("How many columns do you want in your matrix ?")
     # Will be later replaced by dynamical input control
     cycle = enter_int("How many cycle should the program run for ?")
-
+    lg.info("Terminal input gathered\n")
     # Save of the parameters and creation of the env -----------------------------------
     sim1 = SimParam(row, column, cycle)
     prob1 = Proba(p, f)
-    lg.debug(sim1)
+    lg.info(f'Simulation parameters collected:\n{sim1}\n\nSimulation probability collected:\n{prob1}\n')
 
     # Initialisation of the matrix -----------------------------------------------------
     matrix1 = Matrix(sim1.row, sim1.column)
@@ -205,16 +205,19 @@ def main():
     # Main loop ------------------------------------------------------------------------
     for n in range(sim1.cycles):
         lg.info(f'Start of cycle {n}')
-        lg.info(f'\n{matrix1}')
+        print(f'{matrix1}\n')
         matrix1.spread() # Fire spreading
+        lg.info(f'Fire spreaded:\n{matrix1}\n')
         matrix1.probabilistic_insert(prob1.f, State.TREE, State.FIRE) # Fire starting
+        lg.info(f'Fire lit via lightning:\n{matrix1}\n')
         matrix1.probabilistic_insert(prob1.p, State.VOID, State.TREE) # Tree growing
+        lg.info(f'Tree grown:\n{matrix1}\nEnd of the cycle {n}\n')
 
-    lg.warning("finihed")
+    lg.info("Program finished")
 
 # Actual running program ---------------------------------------------------------------
 if __name__ == "__main__":
-    lg.basicConfig(level=lg.INFO)
+    lg.basicConfig(level=lg.WARNING)
     main()
     
 
