@@ -3,7 +3,7 @@
 
 This project is an implementation of the Drossel and Schwabl forest-fire model from 1992. It is one of the earliest cellular automata dedicated to studying self-organized criticality. 
 
-It operates on a 2D matrix populated with trees, void or fire. The fire spreads to nearby trees while source fire dies out. This mechanic allow for an emergent power-law distribution of burned forest cluster and self-organized criticality.
+It operates on a 2D matrix populated with trees, void or fire. The fire spreads to nearby trees while source fire dies out. This mechanism allow for an emergent power-law distribution of burned forest clusters and self-organized criticality.
 
 This version is entirely built in Python using NumPy vectorization to improve efficiency by running C under the hood. It features strict type-hinting, logging and testing to ensure long-term maintainability.
 
@@ -16,6 +16,11 @@ This version is entirely built in Python using NumPy vectorization to improve ef
     - [Vectorized Numpy](#vectorized-numpy)
     - [Code quality](#code-quality)
     - [Repository structure](#repository-structure)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Testing](#testing)
+    - [Explanation](#explanation)
+    - [Execution](#execution)
 - [Roadmap](#roadmap)
 - [Fixes to make](#fixes-to-make)
 
@@ -53,7 +58,7 @@ In order to solve the toroidal wrap-around side effect of `np.roll()`, which wou
 ### Code quality
 To ensure proper modularity and code quality, this script is written using several core paradigms:
 - **Separation of concerns:** The core mathematical engine (`Matrix`, `SimParam`, `Proba`, `State`) is strictly decoupled from terminal I/O (`enter_int`, `enter_proba`). This allows for fast, headless data collection and will facilitate porting the script to Project Mesa.
-- **Safety measures:** To ensure proper reliable execution, the entire script is tested with `pytest`. It is strictly type-hinted and configuration parameters are rendered immutable via `@dataclass(frozen=True)`.
+- **Safety measures:** To ensure reliable execution, the entire script is tested with `pytest`. It is strictly type-hinted and configuration parameters are rendered immutable via `@dataclass(frozen=True)`.
 - **Maintainability:** The project delivers clean debugging feedback through structured `logging`. The modular architecture allows for standard developer installation and dependency management using `pyproject.toml`.
 
 ### Repository structure
@@ -187,15 +192,35 @@ python3 -m forest_fire.main
 # [1 2 1 1 1]
 ```
 
+## Testing
+### Explanation
+To ensure robust and true results, each mathematical function runs against an oracle. 
+
+For the `Matrix.spread()`, those oracles are deterministic spatial tests hard-coded on a $3 \times 3$ matrix. Oracles are made for all critical starting points to prove that fire propagates orthogonally and never jumps across matrix's edges.
+
+For `probabilistic_insert()`, edge cases such as 0 and 1 are tested independently. For other probabilities ranging from 0 excluded to 1 excluded, the test uses the Law of Large Numbers with $N = 10 000$ iterations to verify that the empirical mean converges within $\pm 0.01$ of the target probability.
+
+### Execution
+```bash
+# Run all unit tests
+pytest
+
+# Run with verbose output (shows each individual test function name and status)
+pytest -v
+
+# Run a single specific test (e.g., only the top-left corner test)
+pytest -k "test_top_left_corner"
+```
+
 ## Roadmap
 - [x] Writing a function for the user to enter float between 0 and 1 (for proba)
-- [x] Creating tests using pytest for each functions
-- [ ] Completing README.md
+- [x] Creating tests using pytest for each function
+- [x] Completing README.md
 - [ ] Completing README_FR.md
-- [ ] Implementing a safeguard system to protect from wrong hard coded values (using IntNum)
+- [ ] Implementing a safeguard system to protect from wrong hard coded values (using IntEnum)
 - [ ] Implementing graphs using Matplotlib
 - [ ] Adding a visualisation using pygame or similar library
-- [ ] Storing results of each runs in an outside file
+- [ ] Storing results of each runs in an external file
 - [ ] Porting the package to Project Mesa
 
 ## Fixes to make
