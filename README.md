@@ -3,13 +3,19 @@
 
 This project is an implementation of the Drossel and Schwabl forest-fire model from 1992. It is one of the earliest cellular automata dedicated to studying self-organized criticality. 
 
-It operates on a 2D matrix populated with trees, void or fire. The fire spreads to nearby trees while source fire dies out.
+It operates on a 2D matrix populated with trees, void or fire. The fire spreads to nearby trees while source fire dies out. This mechanic allow for an emergent power-law distribution of burned forest cluster adn self-organized criticality.
 
-This version is entirely built in Python using NumPy vectorization to improve efficiency by running C under the hood and avoiding costly `for` loops.
+This version is entirely built in Python using NumPy vectorization to improve efficiency by running C under the hood. It features strict type-hinting, logging and testingg to ensure long-term maintainability.
 
 ## Table of contents
 - [Scientific references](#scientific-references)
 - [Model architecture](#model-architecture)
+    - [Lattice settings](#lattice-settings)
+    - [Update rules](#update-rules)
+- [Software architecture](#software-architecture)
+    - [Vectorized Numpy](#vectorized-numpy)
+    - [Code quality](#code-quality)
+    - [Repository structure](#repository-structure)
 - [Roadmap](#roadmap)
 - [Fixes to make](#fixes-to-make)
 
@@ -39,7 +45,7 @@ The simulation runs on synchronous update rules meaning the entire matrix update
 4) **Growth:** `VOID` cells grow into `TREE` with probability $p$.
 
 ## Software architecture
-### Vectorized NumPy instead of built-in Python
+### Vectorized NumPy 
 Iterating over a 2D grid using nested `for` loops introduces heavy calculation overhead and is inherently slow. Instead, this program uses NumPy to compute array operations. It is significantly faster because NumPy methods are written in C, which allows for quick vectorized operations using boolean masking. Moreover, NumPy allows for efficient memory allocation by using `np.uint8` arrays.
 
 In order to solve the toroidal wrap-around side effect of `np.roll()`, which would allow fire to jump from one edge of the grid to the other, static boolean boundary masks are pre-computed when the matrix is initialized and applied each time the grid is rolled.
@@ -64,6 +70,57 @@ forest-fire-model/
     └── test_main.py
 ```
 
+## Installation
+***Installation requires Python 3.10+ and git.***
+
+---
+
+### Linux and macOS
+```bash
+# 1. Clone the repository and enter the directory
+git clone https://github.com/AngeleKowalik/forest_fire_model.git
+cd forest_fire_model
+
+# 2. Create and activate an isolated virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# 3. Upgrade pip (recommended)
+pip install --upgrade pip
+
+# 4a. Standard installation (to simply run the simulation)
+pip install .
+
+# 4b. Developer installation (editable mode, testing and linting dependencies)
+pip install -e ".[dev]"
+```
+
+### Windows
+```powershell
+# 1. Clone the repository and enter the directory
+git clone https://github.com/AngeleKowalik/forest_fire_model.git
+cd forest_fire_model
+
+# 2. Create and activate an isolated virtual environment
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+
+# (Note: If you encounter an execution policy error, run: 
+# Set-ExecutionPolicy Unrestricted -Scope CurrentUser)
+
+# (Note: If using classic Command Prompt/cmd.exe, run:
+# .\.venv\Scripts\activate.bat)
+
+# 3. Upgrade pip (recommended)
+python -m pip install --upgrade pip
+
+# 4a. Standard installation (to simply run the simulation)
+pip install .
+
+# 4b. Developer installation (editable mode, testing and linting dependencies)
+pip install -e ".[dev]"
+```
+
 ## Roadmap
 - [x] Writing a function for the user to enter float between 0 and 1 (for proba)
 - [x] Creating tests using pytest for each functions
@@ -73,6 +130,7 @@ forest-fire-model/
 - [ ] Implementing graphs using Matplotlib
 - [ ] Adding a visualisation using pygame or similar library
 - [ ] Storing results of each runs in an outside file
+- [ ] Porting the package to Project Mesa
 
 ## Fixes to make
 - [x] Checking original paper to see the correct order of operation
