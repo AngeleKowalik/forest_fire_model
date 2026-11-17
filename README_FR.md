@@ -6,7 +6,7 @@ Ce projet est une implémentation personnelle du modèle de feu de forêt propos
 ## Table des matières
 - [Références scientifiques](#références-scientifiques)
 - [Architecture du modèle](#architecture-du-modèle)
-    - [Paramètres du réseau](#paramètres-du-réseau)
+    - [Paramètres de la matrice](#paramètres-de-la-matrice)
     - [Règles de mise à jour](#règles-de-mise-à-jour)
 - [Architecture logicielle](#architecture-logicielle)
     - [NumPy vectorisé](#numpy-vectorisé)
