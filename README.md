@@ -216,7 +216,7 @@ pytest -k "test_top_left_corner"
 - [x] Writing a function for the user to enter float between 0 and 1 (for proba)
 - [x] Creating tests using pytest for each function
 - [x] Completing README.md
-- [ ] Completing README_FR.md
+- [x] Completing README_FR.md
 - [ ] Implementing a safeguard system to protect from wrong hard coded values (using IntEnum)
 - [ ] Implementing graphs using Matplotlib
 - [ ] Adding a visualisation using pygame or similar library
